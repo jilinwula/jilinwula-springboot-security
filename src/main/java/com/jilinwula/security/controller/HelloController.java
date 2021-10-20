@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class HelloController {
+    @ResponseBody
     @GetMapping("/hello")
     public String hello() {
         return "hello";
