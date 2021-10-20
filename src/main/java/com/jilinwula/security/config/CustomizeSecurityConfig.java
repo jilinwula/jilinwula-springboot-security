@@ -1,5 +1,6 @@
 package com.jilinwula.security.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -8,6 +9,10 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.util.matcher.AndRequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import java.io.PrintWriter;
 
 @Configuration
 public class CustomizeSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -27,7 +32,7 @@ public class CustomizeSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/js/**", "/css/**", "/image/**","/templates/**");
+        web.ignoring().antMatchers("/js/**", "/css/**", "/image/**", "/templates/**");
     }
 
     @Override
@@ -44,7 +49,23 @@ public class CustomizeSecurityConfig extends WebSecurityConfigurerAdapter {
                 .successForwardUrl("/index")
                 .failureForwardUrl("/asdf")
                 .failureUrl("/asdf")
+                .successHandler((req, res, auch) -> {
+                    Object principal = auch.getPrincipal();
+                    res.setContentType("application/json;charset=utf-8");
+                    PrintWriter out = res.getWriter();
+                    out.write(new ObjectMapper().writeValueAsString(principal));
+                    out.flush();
+                    out.close();
+                })
                 .permitAll()
+                .and()
+                .logout()
+                .logoutUrl("/logout")
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "POST"))
+                .logoutSuccessUrl("/login")
+                .deleteCookies()
+                .clearAuthentication(true)
+                .invalidateHttpSession(true)
                 .and()
                 .csrf().disable()
         ;
