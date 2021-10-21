@@ -54,6 +54,15 @@ public class CustomizeSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
+                .anyRequest().authenticated()
+                .and()
+                .formLogin()
+                .and()
+                .rememberMe()
+                .and()
+                .csrf().disable()
+        ;
+        /*http.authorizeRequests()
                 .antMatchers("/admin/**").hasRole("admin")
                 .antMatchers("/user/**").hasRole("user")
                 .anyRequest()
@@ -123,6 +132,6 @@ public class CustomizeSecurityConfig extends WebSecurityConfigurerAdapter {
                             out.close();
                         }
                 );
-        ;
+        ;*/
     }
 }
