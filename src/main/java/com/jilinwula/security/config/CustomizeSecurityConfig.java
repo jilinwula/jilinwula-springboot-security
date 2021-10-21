@@ -25,19 +25,12 @@ public class CustomizeSecurityConfig extends WebSecurityConfigurerAdapter {
         return NoOpPasswordEncoder.getInstance();
     }
 
-    @Bean
-    @Override
-    protected UserDetailsService userDetailsService() {
-        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-        manager.createUser(User.withUsername("tigezi").password("tigezi.com").roles("admin").build());
-        return manager;
-    }
-
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
-                .withUser("jilinwula")
-                .password("jilinwula")
+                .withUser("jilinwula").password("jilinwula").roles("admin")
+                .and()
+                .withUser("tigezi").password("tigezi").roles("user")
         ;
     }
 
