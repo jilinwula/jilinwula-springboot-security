@@ -1,6 +1,8 @@
 package com.jilinwula.security.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jilinwula.security.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
@@ -22,6 +24,10 @@ import java.io.PrintWriter;
 
 @Configuration
 public class CustomizeSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    UserService userService;
+
     @Bean
     PasswordEncoder passwordEncoder() {
         return NoOpPasswordEncoder.getInstance();
@@ -35,14 +41,9 @@ public class CustomizeSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
-
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("jilinwula").password("jilinwula").roles("admin")
-                .and()
-                .withUser("tigezi").password("tigezi").roles("user")
-        ;
+        auth.userDetailsService(userService);
     }
 
     @Override
